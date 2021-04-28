@@ -153,6 +153,7 @@ class NeoBaseRecordingExtractor(RecordingExtractor, _NeoBaseExtractor):
         return self._channel_ids
 
 
+
 class NeoBaseSortingExtractor(SortingExtractor, _NeoBaseExtractor):
     def __init__(self, block_index=None, seg_index=None, **kargs):
         SortingExtractor.__init__(self)

@@ -27,6 +27,11 @@ if sys.platform == "linux" or run_local:
 
         @parameterized.expand([
             (
+                se.AxonaRecordingExtractor,
+                "axona",
+                dict(filename=str(Path.cwd() / "ephy_testing_data" / "axona" / "axona_raw.set"))
+            ),
+            (
                 se.BlackrockRecordingExtractor,
                 "blackrock/blackrock_2_1",
                 dict(

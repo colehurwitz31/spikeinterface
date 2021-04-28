@@ -23,7 +23,7 @@ from .extractors.npzsortingextractor.npzsortingextractor import NpzSortingExtrac
 from .extractors.mcsh5recordingextractor.mcsh5recordingextractor import MCSH5RecordingExtractor
 from .extractors.shybridextractors import SHYBRIDRecordingExtractor, SHYBRIDSortingExtractor
 from .extractors.nixioextractors.nixioextractors import NIXIORecordingExtractor, NIXIOSortingExtractor
-from .extractors.neoextractors import (PlexonRecordingExtractor, PlexonSortingExtractor,
+from .extractors.neoextractors import (AxonaRecordingExtractor, PlexonRecordingExtractor, PlexonSortingExtractor,
                                        NeuralynxRecordingExtractor, NeuralynxSortingExtractor,
                                        BlackrockRecordingExtractor, BlackrockSortingExtractor,
                                        MCSRawRecordingExtractor, SpikeGadgetsRecordingExtractor)
@@ -63,6 +63,7 @@ recording_extractor_full_list = [
     NeuropixelsDatRecordingExtractor,
 
     # neo based
+    AxonaRecordingExtractor,
     PlexonRecordingExtractor,
     NeuralynxRecordingExtractor,
     BlackrockRecordingExtractor,

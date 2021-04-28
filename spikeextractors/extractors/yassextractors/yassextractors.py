@@ -71,19 +71,21 @@ class YassSortingExtractor(SortingExtractor):
 
         if self.spike_train is None:
             self.spike_train = np.load(self.fname_spike_train)
-            
+        
         # find unit id spike times
-        idx = np.where(self.spike_train[:,1]==unit_id)
-        spike_times = self.spike_train[idx,0].squeeze()
+        idx = np.where(spike_train[:,1]==unit_id)[0]
+        spike_times = spike_train[idx,0]
 
         # find spike times
         if start_frame is None:
             start_frame = 0
         if end_frame is None:
             end_frame = 1E50 # use large time
-            
+
         idx2 = np.where(np.logical_and(spike_times>=start_frame, spike_times<end_frame))[0]
         spike_times = spike_times[idx2]
-        
+
         return spike_times
+    
+    
     

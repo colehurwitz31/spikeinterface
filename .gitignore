@@ -3,3 +3,4 @@
 .ipynb_checkpoints
 __pycache__
 sample_*_dataset
+ephy_testing_data/

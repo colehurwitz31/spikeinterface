@@ -1250,7 +1250,9 @@ class NwbSortingExtractor(se.SortingExtractor):
             halfwidth="The full-width half maximum of the negative peak computed on the maximum channel.",
             peak_to_valley="The duration between the negative and the positive peaks computed on the maximum channel.",
             snr="The signal-to-noise ratio of the unit.",
-            quality="Quality of the unit as defined by phy (good, mua, noise)."
+            quality="Quality of the unit as defined by phy (good, mua, noise).",
+            spike_amplitude="Average amplitude of peaks detected on the channel.",
+            spike_rate="Average rate of peaks detected on the channel."
         )
         if property_descriptions is None:
             property_descriptions = dict(default_descriptions)

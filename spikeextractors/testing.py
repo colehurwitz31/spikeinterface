@@ -126,6 +126,15 @@ def check_dumping(extractor):
     elif 'Sorting' in str(type(extractor)):
         check_sortings_equal(extractor, extractor_loaded)
 
+    # dump to dict with relative path
+    d = extractor.dump_to_dict(relative_to=".")
+    extractor_loaded = load_extractor_from_dict(d)
+
+    if 'Recording' in str(type(extractor)):
+        check_recordings_equal(extractor, extractor_loaded)
+    elif 'Sorting' in str(type(extractor)):
+        check_sortings_equal(extractor, extractor_loaded)
+
     # dump to json
     # without file_name
     extractor.dump_to_json()
@@ -159,6 +168,15 @@ def check_dumping(extractor):
         check_sortings_equal(extractor, extractor_loaded)
         check_sorting_properties_features(extractor, extractor_loaded)
 
+    # dump to json with relative path
+    extractor.dump_to_json(file_path='test_dumping/test_rel.json', relative_to=".")
+    extractor_loaded = load_extractor_from_json('test_dumping/test_rel.json')
+
+    if 'Recording' in str(type(extractor)):
+        check_recordings_equal(extractor, extractor_loaded)
+    elif 'Sorting' in str(type(extractor)):
+        check_sortings_equal(extractor, extractor_loaded)
+
     # with file_name
     extractor.dump_to_pickle(file_path='test_dumping/test.pkl')
     extractor_loaded = load_extractor_from_pickle('test_dumping/test.pkl')
@@ -169,6 +187,15 @@ def check_dumping(extractor):
     elif 'Sorting' in str(type(extractor)):
         check_sortings_equal(extractor, extractor_loaded)
         check_sorting_properties_features(extractor, extractor_loaded)
+
+    # dump to pickle with relative path
+    extractor.dump_to_pickle(file_path='test_dumping/test_rel.pkl', relative_to=".")
+    extractor_loaded = load_extractor_from_pickle('test_dumping/test_rel.pkl')
+
+    if 'Recording' in str(type(extractor)):
+        check_recordings_equal(extractor, extractor_loaded)
+    elif 'Sorting' in str(type(extractor)):
+        check_sortings_equal(extractor, extractor_loaded)
 
     shutil.rmtree('test_dumping')
     if Path('spikeinterface_recording.json').is_file():

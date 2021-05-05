@@ -124,7 +124,7 @@ class BinDatRecordingExtractor(RecordingExtractor):
                 channel_idxs = np.array([self.get_channel_ids().index(ch) for ch in channel_ids])
                 if np.all(np.diff(channel_idxs) == 1):
                     traces = self._timeseries[channel_idxs[0]:channel_idxs[0]+len(channel_idxs),
-                                 start_frame:end_frame]
+                                              start_frame:end_frame]
                 else:
                     # This block of the execution will return the data as an array, not a memmap
                     traces = self._timeseries[channel_idxs, start_frame:end_frame]

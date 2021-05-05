@@ -68,10 +68,15 @@ class BaseExtractor:
             except Exception as e:
                 raise Exception(f"Error in deleting {memmap_file.name}: Error {e}")
 
-    def make_serialized_dict(self):
+    def make_serialized_dict(self, relative_to=None):
         """
         Makes a nested serialized dictionary out of the extractor. The dictionary be used to re-initialize an
         extractor with spikeextractors.load_extractor_from_dict(dump_dict)
+
+        Parameters
+        ----------
+        relative_to: str, Path, or None
+            If not None, file_paths are serialized relative to this path
 
         Returns
         -------
@@ -95,20 +100,32 @@ class BaseExtractor:
             dump_dict = {'class': class_name, 'module': module, 'kwargs': {}, 'key_properties': self._key_properties,
                          'annotations': self._annotations, 'version': imported_module.__version__,
                          'dumpable': False}
+
+        if relative_to is not None:
+            relative_to = Path(relative_to).absolute()
+            assert relative_to.is_dir(), "'relative_to' must be an existing directory"
+
+            dump_dict = _make_paths_relative(dump_dict, relative_to)
+
         return dump_dict
 
-    def dump_to_dict(self):
+    def dump_to_dict(self, relative_to=None):
         """
         Dumps recording to a dictionary.
         The dictionary be used to re-initialize an
         extractor with spikeextractors.load_extractor_from_dict(dump_dict)
+
+        Parameters
+        ----------
+        relative_to: str, Path, or None
+            If not None, file_paths are serialized relative to this path
 
         Returns
         -------
         dump_dict: dict
             Serialized dictionary
         """
-        return self.make_serialized_dict()
+        return self.make_serialized_dict(relative_to)
 
     def _get_file_path(self, file_path, extensions):
         """
@@ -151,7 +168,7 @@ class BaseExtractor:
             raise NotDumpableExtractorError(
                 f"The extractor is not dumpable to {ext}")
 
-    def dump_to_json(self, file_path=None):
+    def dump_to_json(self, file_path=None, relative_to=None):
         """
         Dumps recording extractor to json file.
         The extractor can be re-loaded with spikeextractors.load_extractor_from_json(json_file)
@@ -160,15 +177,19 @@ class BaseExtractor:
         ----------
         file_path: str
             Path of the json file
+        relative_to: str, Path, or None
+            If not None, file_paths are serialized relative to this path
+
         """
-        dump_dict = self.make_serialized_dict()
+        dump_dict = self.make_serialized_dict(relative_to)
         self._get_file_path(file_path, ['.json'])\
             .write_text(
                 json.dumps(_check_json(dump_dict), indent=4),
                 encoding='utf8'
             )
 
-    def dump_to_pickle(self, file_path=None, include_properties=True, include_features=True):
+    def dump_to_pickle(self, file_path=None, include_properties=True, include_features=True,
+                       relative_to=None):
         """
         Dumps recording extractor to a pickle file.
         The extractor can be re-loaded with spikeextractors.load_extractor_from_json(json_file)
@@ -181,11 +202,13 @@ class BaseExtractor:
             If True, all properties are dumped
         include_features: bool
             If True, all features are dumped
+        relative_to: str, Path, or None
+            If not None, file_paths are serialized relative to this path
         """
         file_path = self._get_file_path(file_path, ['.pkl', '.pickle'])
 
         # Dump all
-        dump_dict = {'serialized_dict': self.make_serialized_dict()}
+        dump_dict = {'serialized_dict': self.make_serialized_dict(relative_to)}
         if include_properties:
             if len(self._properties.keys()) > 0:
                 dump_dict['properties'] = self._properties
@@ -502,6 +525,20 @@ class BaseExtractor:
 
     def check_if_dumpable(self):
         return _check_if_dumpable(self.make_serialized_dict())
+
+
+def _make_paths_relative(d, relative):
+    dcopy = deepcopy(d)
+    if "kwargs" in dcopy.keys():
+        relative_kwargs = _make_paths_relative(dcopy["kwargs"], relative)
+        dcopy["kwargs"] = relative_kwargs
+        return dcopy
+    else:
+        for k in d.keys():
+            # in SI, all input paths have the "path" keyword
+            if "path" in k:
+                d[k] = str(Path(d[k]).relative_to(relative))
+        return d
 
 
 def _load_extractor_from_dict(dic):
